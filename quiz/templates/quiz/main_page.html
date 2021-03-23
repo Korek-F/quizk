@@ -1,0 +1,25 @@
+{%extends "quiz/base.html"%}
+{% block content%}
+    {%if user.is_authenticated%}
+        <a href="{% url 'add_quiz'%}">
+            <button id="add_question">Dodaj Quiz</button>
+        </a>
+
+        <div class="row">
+            {%for quiz in quizzes%}
+                <div class="col-md-6 col-sm-12">
+                    <a href="{% url 'quiz' quiz.id %}"> 
+                        <div class="quiz_name_block">
+                            {{quiz.name|truncatechars:37}}
+                            <small style="font-size:10px;"">{{quiz.point_count}} pytań</small>
+                        </div>
+                        <div class="quiz_description_block">
+                            {{quiz.description|truncatechars:62}}
+                        </div>
+                    </a>
+                </div>
+            {%endfor%}
+        </div>
+    {%endif%}
+
+{%endblock%}
