@@ -5,9 +5,13 @@ h1{
 *{
 box-sizing: border-box;
 }
-a,a:hover{
+a{
 text-decoration: none;
 color:var(--text-color);
+}
+a:hover{
+  color: var(--a-hover);
+  text-decoration: underline;
 }
 /*
   --background :rgb(255, 81, 212);
@@ -31,6 +35,7 @@ color:var(--text-color);
   --question-text:rgb(20, 20, 20);
   --text-color: white;
   --question-box-border:white;
+  --a-hover:yellow;
 }
 .modal {
   display: none; 
@@ -80,7 +85,7 @@ font-size: 20px;
 position:relative;
 background-color: var(--body-color);
 margin: 0 auto;
-max-width: 1400px;
+max-width: 1600px;
 min-height: 100vh;
 border:3px solid var(--main-color);
 
@@ -96,7 +101,7 @@ margin: 10px 10px;
 
 .quiz_name_block{
 width:100%;
-min-height: 90px;
+min-height: 120px;
 font-size: 30px;
 padding:20px;
 height: 50%;
@@ -128,7 +133,6 @@ width: 100%;
 margin-top: 10px;
 height: 50px;
 font-size: 30px;
-border-radius: 30px;
 border: 2px solid white;
 background-color: var(--main-color);
 text-align: center;
@@ -222,7 +226,7 @@ nav {
   padding: 20px;
   text-align: center;
   overflow-wrap: break-word;
-  min-height:280px;
+  min-height:180px;
   height: 100%;
   border-radius: 20px;
 }
@@ -266,3 +270,67 @@ nav {
 .row{
   --bs-gutter-x:0!important;
 }
+
+.my_profile{
+  width:100%;
+  background-color: var(--second-color);
+  padding:20px;
+}
+.my_profile_name{
+  font-size: 60px;
+}
+.my_profile_all_quizzes{
+  width:100%;
+  background-color:var(--body-color) ;
+  padding:20px;
+  margin-top: 40px;
+}
+.my_profile_quiz{
+  background-color:var(--second-color);
+  margin: 20px;
+  padding: 20px;
+  border: 2px solid var(--second-color);
+}
+.my_profile_quiz:hover{
+  border: 2px solid var(--question-box-border);
+}
+
+.my_form{
+  height: 50px;
+  font-size: 30px;
+}
+label{
+  font-size: 30px;
+}
+.my_checkbox{
+  height: 20px;
+  width:30px;
+  margin-top: 10px;
+}
+.mini_stats{
+  text-align: right;
+  font-size: 20px;
+}
+
+.quiz_name_main{
+  float:left;
+  width:75%;
+}
+.small_stats{
+  width:25%;
+  background-color: var(--second-color);
+  padding:5px;
+  border-radius:2px;
+  float:left;
+  font-size: 20px;
+
+}
+
+@media only screen and (max-width: 1150px) {
+  .small_stats{
+    display: none;
+  }
+  .quiz_name_main{
+    font-size: 24px;
+  }
+  }

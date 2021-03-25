@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Profile(models.Model):
     user = models.OneToOneField(User, null=True,on_delete=models.CASCADE)
+    quizzies = models.ManyToManyField("Quiz", related_name="+", blank=True)
     def __str__(self):
         return self.user.username
         
@@ -13,9 +14,11 @@ class Quiz(models.Model):
     name = models.CharField(max_length=200, blank=True)
     description = models.CharField(max_length=600, blank=True)
     date = models.DateTimeField(auto_now_add=True)
+    public = models.BooleanField(default=False)
     questions = models.ManyToManyField("Question", related_name="+", blank=True)
     sessions = models.ManyToManyField("Session", related_name="+", blank=True)
-
+    views = models.DecimalField(default=0, max_digits=99999, decimal_places=0, blank=True)
+    finished_sessions = models.DecimalField(default=0, max_digits=99999, decimal_places=0, blank=True)
     def point_count(self):
         return self.questions.all().count()
 

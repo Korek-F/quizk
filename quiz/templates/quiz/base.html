@@ -15,7 +15,7 @@
     <div class="row">
     {% if user.is_authenticated%}
       <div class="col-sm-12 col-md-3 my-nav-item"> <a href="{% url 'main_page' %}">Strona główna</a></div>
-      <div class="col-sm-12 col-md-3 my-nav-item">asdasdasd</div>
+      <div class="col-sm-12 col-md-3 my-nav-item"><a href="{% url 'profile' user.profile.id %}">Mój profil</a></div>
       <div class="col-sm-12 col-md-3 my-nav-item">asdasdasd</div>
       <div class="col-sm-12 col-md-3 my-nav-item"><a href="{% url 'logout' %}"> Wyloguj</a></div>
     {%else%}

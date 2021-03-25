@@ -10,11 +10,12 @@ from rest_framework.decorators import api_view
 from .serializers import QuizSerializer, QuestionSerializer, StartedQuizQuestionSerializer
 from django.contrib.auth.decorators import login_required
 from rest_framework.response import Response
+from .forms import EditQuizForm
 
 
 class MainPage(View):
     def get(self, request):
-        quizzes = Quiz.objects.all()
+        quizzes = Quiz.objects.all().filter(public=True)
         return render(request, "quiz/main_page.html",{"quizzes":quizzes,})
 
 import string
@@ -68,6 +69,8 @@ class AddQuizView(View):
         quiz_description = request.POST["quiz_description"]
         quiz = Quiz(owner=user, name=quiz_name, description=quiz_description)
         quiz.save()
+        user.quizzies.add(quiz)
+        user.save()
         return redirect('quiz', quiz.id)
 
 class QuizView(View):
@@ -76,6 +79,8 @@ class QuizView(View):
         context = {
             'quiz':quiz,
         }
+        quiz.views +=1
+        quiz.save()
         return render(request, 'quiz/quiz_detail.html',context)
 
 @api_view(["POST"])
@@ -170,5 +175,50 @@ class FinishedQuiz(View):
         max_points = quiz.questions.all().count()
         session_points = int(session.points)
         session.save()
-        
+        quiz.finished_sessions +=1
+        quiz.save()
+
         return JsonResponse(list([session_points, max_points]), safe=False)
+
+class MyProfile(View):
+    def get(self, request, id):
+        profile = Profile.objects.get(id=id)
+        total_views = 0
+        for quiz in profile.quizzies.all():
+            total_views += quiz.views
+        context = {
+            'profile':profile,
+            'public_quiz':profile.quizzies.all().filter(public=True),
+            'private_quiz':profile.quizzies.all().filter(public=False),
+            'most_popular_quiz':profile.quizzies.all().order_by("-views")[0],
+            'total_views':total_views,
+            'quiz_count':profile.quizzies.all().count(),
+        }
+        return render(request, 'quiz/profile.html', context)
+
+class EditQuiz(View):
+    def get(self, request, id):
+        quiz = get_object_or_404(Quiz, id=id)
+        context = {
+            'quiz':quiz,
+            'form':EditQuizForm(initial={
+                'name':quiz.name,
+                'description':quiz.description,
+                'public':quiz.public,
+            }),
+        } 
+        return render(request, 'quiz/edit_quiz.html', context)
+    def post(self, request, id):
+        quiz = get_object_or_404(Quiz, id=id)
+        form = EditQuizForm(request.POST, instance=quiz)
+        if form.is_valid():
+            form.save()
+            return redirect("quiz",quiz.id)
+        else:
+            return redirect("quiz",quiz.id)
+
+def DeleteQuiz(request, id):
+    quiz = get_object_or_404(Quiz, id=id)
+    owner_id = quiz.owner.id
+    quiz.delete()
+    return redirect("profile",owner_id)

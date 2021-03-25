@@ -3,17 +3,32 @@
 {% block content%}
     <div class="quiz_name_block">
       {{quiz.name}}     
+      <div class="mini_stats"> 
+      Wyświetlenia: {{quiz.views}} <br />
+      Skończone sesje: {{quiz.finished_sessions}}
+      </div>
     </div>
     <div class="quiz_description_block">
       {{quiz.description}}     
     </div>
-    <form action="{% url 'start_session' quiz.id%}" method="POST">
-      {% csrf_token %}
-      <button class="my_button">Zacznij Quiz</button>
-    </form>
+    
     {%if user.is_authenticated and user.profile == quiz.owner%}
-
-        <button id="add_question"  class="my_button">Dodaj pytanie</button>
+      <div class="row"> 
+        <div class="col-sm-12 col-md-4"> 
+          <button id="add_question"  class="my_button">Dodaj pytanie</button>
+        </div>
+        <div class="col-sm-12 col-md-4"> 
+          <a href="{%url 'edit_quiz' quiz.id%}">
+            <button  class="my_button">Edytuj</button>
+          </a>
+        </div>
+        <div class="col-sm-12 col-md-4"> 
+          <form action="{% url 'start_session' quiz.id%}" method="POST">
+            {% csrf_token %}
+            <button class="my_button">Zacznij Quiz</button>
+          </form>
+        </div>
+      </div>
         <div id="all_questions_box" class="row">
 
 
@@ -70,7 +85,11 @@
               <button id="delete_question">Usuń</button>
           </div>
       </div>
-    
+    {%else%}
+    <form action="{% url 'start_session' quiz.id%}" method="POST">
+      {% csrf_token %}
+      <button class="my_button">Zacznij Quiz</button>
+    </form>
     {%endif%}
 
     <script type="text/javascript">
