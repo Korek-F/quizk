@@ -75,8 +75,6 @@ body{
 background-color: var(--background); 
 background-image: url(tlo.jpg);
 background-blend-mode: darken;
-//rgb(255, 145, 0)
-//rgb(243, 255, 78)
 }
 .main-box{
 color:var(--text-color);
@@ -92,11 +90,9 @@ border:3px solid var(--main-color);
 }
 .answer_text{
 width:80%;
-
 }
 .answer_check{
 margin: 10px 10px;
-
 }
 
 .quiz_name_block{
@@ -106,7 +102,7 @@ font-size: 30px;
 padding:20px;
 height: 50%;
 background-color: var(--main-color);
-border-radius: 30px 30px 0px 0px;
+border-radius: 30px 0px 0px 0px;
 overflow-wrap: break-word;
 border-left: 2px solid var(--question-box-border);
 border-right: 2px solid var(--question-box-border);
@@ -189,6 +185,7 @@ left:0;
 width: 100%;
 height:80px;
 font-size:30px;
+border-bottom:2px solid var(--question-box-border);
 }
 .fake_box{
 height:80px
@@ -310,6 +307,7 @@ label{
 .mini_stats{
   text-align: right;
   font-size: 20px;
+ 
 }
 
 .quiz_name_main{
@@ -320,9 +318,10 @@ label{
   width:25%;
   background-color: var(--second-color);
   padding:5px;
-  border-radius:2px;
+  border-radius:15px;
   float:left;
   font-size: 20px;
+  text-align: center;
 
 }
 

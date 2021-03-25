@@ -1,12 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
+from random import randint
 
 # Create your models here.
 class Profile(models.Model):
     user = models.OneToOneField(User, null=True,on_delete=models.CASCADE)
     quizzies = models.ManyToManyField("Quiz", related_name="+", blank=True)
+    classes = models.ManyToManyField("QuizClass", related_name="+", blank=True)
+    classes_owner = models.ManyToManyField("QuizClass", related_name="+", blank=True)
     def __str__(self):
         return self.user.username
+
         
 
 class Quiz(models.Model):
@@ -48,3 +52,22 @@ class Session(models.Model):
 
     def __str__(self):
         return str(self.owner.user.username) 
+
+class QuizClass(models.Model):
+    owner = models.ForeignKey("Profile", null=True, on_delete=models.CASCADE)
+    students = models.ManyToManyField("Profile", related_name="+", blank=True)
+    sessions = models.ManyToManyField("ClassSession", related_name="+", blank=True)
+
+    def __str__(self):
+        return str(self.owner.user.username) 
+    
+
+class ClassSession(models.Model):
+    quiz_class = models.ForeignKey("QuizClass", null=True, on_delete=models.CASCADE)
+    quiz = models.ForeignKey("Quiz", null=True, on_delete=models.CASCADE)
+    sessions = models.ManyToManyField("Session", related_name="+", blank=True)
+    start = models.DateTimeField()
+    end = models.DateTimeField()
+
+    def __str__(self):
+        return str(self.quiz_class.owner.user.username) 

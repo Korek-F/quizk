@@ -1,0 +1,12 @@
+{%extends "quiz/base.html"%}
+{% block content%}
+    Moje klasy:<br />
+    {%for class in my_classes%}
+        {{class}}<br />
+    {%endfor%}
+
+    Klasy w których jestem:<br />
+    {%for class in classes%}
+        {{class}}<br />
+    {%endfor%}
+{%endblock%}

@@ -19,4 +19,5 @@ urlpatterns = [
     path("started_quiz_get_question/<int:id>", views.StartedQuizGetQuestion,  name="started_quiz_get_question"),
     path("started_quiz_post_answer/<int:id>", views.StartedQuizPostAnswer.as_view(),  name="started_quiz_post_answer"),
     path("finish_quiz/<int:id>", views.FinishedQuiz.as_view(),  name="finish_quiz"),
+    path('my_class', views.MyClassView.as_view(), name="my_class"),
 ]

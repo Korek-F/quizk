@@ -222,3 +222,13 @@ def DeleteQuiz(request, id):
     owner_id = quiz.owner.id
     quiz.delete()
     return redirect("profile",owner_id)
+
+class MyClassView(View):
+    def get(self, request):
+        profile = request.user.profile
+        
+        context={
+            'my_classes':profile.classes_owner.all(),
+            'classes':profile.classes.all(),
+        }
+        return render(request, 'quiz/class.html', context)
