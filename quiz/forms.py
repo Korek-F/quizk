@@ -1,5 +1,5 @@
 from django import forms
-from .models import Quiz
+from .models import Quiz, QuizClass
 
 class EditQuizForm(forms.ModelForm):
     class Meta:
@@ -14,4 +14,15 @@ class EditQuizForm(forms.ModelForm):
             "name": "Nazwa",
             "description": "Opis",
             "public": "Czy quiz ma być publiczny?",
+        }
+
+class QuizClassForm(forms.ModelForm):
+    class Meta:
+        model = QuizClass
+        fields = ('name',)
+        widgets = {
+            'name': forms.TextInput(attrs={'class':"form-control my_form"}),
+        }
+        labels = {
+            "name": "Nazwa",
         }

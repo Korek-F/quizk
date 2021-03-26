@@ -20,4 +20,8 @@ urlpatterns = [
     path("started_quiz_post_answer/<int:id>", views.StartedQuizPostAnswer.as_view(),  name="started_quiz_post_answer"),
     path("finish_quiz/<int:id>", views.FinishedQuiz.as_view(),  name="finish_quiz"),
     path('my_class', views.MyClassView.as_view(), name="my_class"),
+    path('add_class', views.AddClassView.as_view(), name="add_class"),
+    path('class/<int:pk>', views.ClassView.as_view(), name="class"),
+    path('add_user_to_class/<int:pk>', views.AddUserToClass, name="add_user_to_class"),
+    path('remove_user_from_class/<int:pk>/<int:id>', views.RemoveUserFromClass, name="remove_user_from_class"),
 ]

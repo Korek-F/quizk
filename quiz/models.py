@@ -54,12 +54,13 @@ class Session(models.Model):
         return str(self.owner.user.username) 
 
 class QuizClass(models.Model):
+    name = models.CharField(max_length=200)
     owner = models.ForeignKey("Profile", null=True, on_delete=models.CASCADE)
     students = models.ManyToManyField("Profile", related_name="+", blank=True)
     sessions = models.ManyToManyField("ClassSession", related_name="+", blank=True)
 
     def __str__(self):
-        return str(self.owner.user.username) 
+        return str(self.name) 
     
 
 class ClassSession(models.Model):

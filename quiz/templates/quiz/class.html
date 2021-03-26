@@ -1,12 +1,17 @@
 {%extends "quiz/base.html"%}
 {% block content%}
-    Moje klasy:<br />
-    {%for class in my_classes%}
-        {{class}}<br />
-    {%endfor%}
+    <div class="my_profile_all_quizzes"> 
+        <a href="{%url 'add_class' %}"> 
+            <button class="my_button">Dodaj Klase</button>
+        </a>
+        <span style="font-size: 30px;">Klasy którymi zarządzasz: </span>
+        {%for class in my_classes%}
+            <a href="{%url 'class' class.id%}"><div class="my_profile_quiz">{{class}} </div> </a>
+        {%endfor%}
 
-    Klasy w których jestem:<br />
-    {%for class in classes%}
-        {{class}}<br />
-    {%endfor%}
+        <span style="font-size: 30px;">Klasy do których należysz: </span>
+        {%for class in classes%}
+            <a href="{%url 'class' class.id%}"><div class="my_profile_quiz">{{class}} </div> </a>
+        {%endfor%}
+    </div>
 {%endblock%}

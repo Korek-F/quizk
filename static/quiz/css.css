@@ -333,3 +333,8 @@ label{
     font-size: 24px;
   }
   }
+
+  .class_form{
+    width:30%;
+    float:right;
+  }

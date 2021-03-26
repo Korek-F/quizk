@@ -1,12 +1,12 @@
 {%extends "quiz/base.html"%}
 {% block content%}
     {%if user.is_authenticated%}
-    Dodaj quiz
-    <form action="{% url 'add_quiz'%}" method="POST">
+    <h1>Dodaj quiz </h1>
+    <form action="{% url 'add_quiz'%}" method="POST"  class="form-control">
         {% csrf_token %}
-        <input type="text" placeholder="Nazwa quizu" name="quiz_name"/>
-        <input type="text" placeholder="Opis" name="quiz_description"/>
-        <button type="submit">Dodaj</button>
+        <input type="text" class="form-control my_form" placeholder="Nazwa quizu" name="quiz_name"/>
+        <input type="text"  class="form-control my_form" placeholder="Opis" name="quiz_description"/>
+        <button type="submit" class="my_button" >Dodaj</button>
     </form>
     {%endif%}
 

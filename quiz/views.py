@@ -4,13 +4,13 @@ from django.contrib.auth.models import User
 from .models import Profile
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
-from .models import Quiz, Question, Answer, Session
+from .models import Quiz, Question, Answer, Session, QuizClass, ClassSession
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from .serializers import QuizSerializer, QuestionSerializer, StartedQuizQuestionSerializer
 from django.contrib.auth.decorators import login_required
 from rest_framework.response import Response
-from .forms import EditQuizForm
+from .forms import EditQuizForm, QuizClassForm
 
 
 class MainPage(View):
@@ -114,7 +114,10 @@ def StartSession(request, id):
     profile = request.user.profile
     quiz = Quiz.objects.get(id=id)
     if quiz.sessions.filter(owner=profile, finished=False).exists():
-        session = quiz.sessions.filter(owner=profile, finished=False)[0]
+        try:
+            session = quiz.sessions.filter(owner=profile, finished=False)[0]
+        except:
+            session = []
     else:
         session = Session(owner=profile, quiz=quiz)
         session.save()
@@ -186,11 +189,15 @@ class MyProfile(View):
         total_views = 0
         for quiz in profile.quizzies.all():
             total_views += quiz.views
+        try:
+            most_popular_quiz= profile.quizzies.all().order_by("-views")[0]
+        except:
+            most_popular_quiz = None
         context = {
             'profile':profile,
             'public_quiz':profile.quizzies.all().filter(public=True),
             'private_quiz':profile.quizzies.all().filter(public=False),
-            'most_popular_quiz':profile.quizzies.all().order_by("-views")[0],
+            'most_popular_quiz':most_popular_quiz,
             'total_views':total_views,
             'quiz_count':profile.quizzies.all().count(),
         }
@@ -232,3 +239,51 @@ class MyClassView(View):
             'classes':profile.classes.all(),
         }
         return render(request, 'quiz/class.html', context)
+
+class AddClassView(View):
+    def get(self, request):
+        context={
+            'form':QuizClassForm(),
+        }
+        return render(request, "quiz/add_class.html", context)
+    def post(self, request):
+        profile = request.user.profile
+        form = QuizClassForm(request.POST)
+        if form.is_valid():
+            quiz_class = form.save(commit=False)
+            quiz_class.owner = request.user.profile
+            quiz_class.save()
+            profile.classes_owner.add(quiz_class)
+            profile.save()
+            return redirect('main_page')
+        return redirect('add_class')
+
+class ClassView(View):
+    def get(self, request, pk):
+        quiz_class = get_object_or_404(QuizClass, id=pk)
+        context={
+            'class':quiz_class,
+        }
+        return render(request, 'quiz/class_view.html', context)
+
+def AddUserToClass(request, pk):
+    if request.method=="POST":
+        quiz_class = get_object_or_404(QuizClass, id=pk)
+        user = request.POST["user_name"]
+        student = User.objects.filter(username=user)
+        if student.exists():
+            quiz_class.students.add(student[0].profile)
+            student[0].profile.classes.add(quiz_class)
+            student[0].profile.save()
+            quiz_class.save()
+        return redirect("class",quiz_class.id )
+
+def RemoveUserFromClass(request, pk, id):
+    if request.method=="POST":
+        quiz_class = get_object_or_404(QuizClass, id=pk)
+        user = get_object_or_404(Profile, id=id)
+        quiz_class.students.remove(user)
+        quiz_class.save()
+        user.classes.remove(quiz_class)
+        user.save()
+        return redirect("class",quiz_class.id )
