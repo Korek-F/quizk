@@ -78,12 +78,8 @@ WSGI_APPLICATION = 'quizk.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'd1ohrjh9sp3eu6',
-        'USER': 'lhktmgwxlrzyff',
-        'PASSWORD': '747564287158ec6d19faf67f57c10f7ee4dda7f8255bd37e19447e4468cc558a',
-        'HOST': 'ec2-34-242-89-204.eu-west-1.compute.amazonaws.com',
-        'POST': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': str(os.path.join(BASE_DIR, "db.sqlite3"))
     }
 }
 
