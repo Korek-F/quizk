@@ -1,0 +1,12 @@
+{%extends "quiz/base.html"%}
+{% block content%}
+<h1>Registration</h1>
+<form action="{% url 'register' %}" method="POST" class="form-control">
+    {% csrf_token%}
+    <input class="form-control" type="text" name="name" placeholder="Nazwa"/>
+    <input class="form-control" type="email" name="email" placeholder="Email"/>
+    <input class="form-control" type="password" name="password" placeholder="Hasło"/>
+    <button class="form-control" type="submit">register</button>
+
+</form>
+{%endblock%}

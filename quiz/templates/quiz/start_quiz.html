@@ -1,0 +1,228 @@
+{%extends "quiz/base.html"%}
+{% block content%}
+    {%if user.is_authenticated and user.profile == session.owner%}
+        <div id="main_quiz_box">
+            <div id="session_question_text">
+                Text
+            </div>
+            <button id="next_question" class="my_button">Next question</button>
+            <div id="session_answers_box" class="row">
+                <div class="col-sm-6 col-md-6"> 
+                    <div class="session_answer_box" id="session_answer_box1">
+                        <div id="session_answer1"></div>
+                        
+                    </div>
+
+                </div>
+                <div class="col-sm-6 col-md-6"> 
+                    <div class="session_answer_box" id="session_answer_box2">
+                        <div id="session_answer2"></div>
+                        
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-6"> 
+                    <div class="session_answer_box" id="session_answer_box3">
+                        <div id="session_answer3"></div>
+                        
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-6"> 
+                    <div class="session_answer_box " id="session_answer_box4">
+                        <div id="session_answer4"></div>
+                       
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+        
+
+        <script type="text/javascript">
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            function fit_to_div(text, div){
+                if(text.length<20){
+                    div.style["font-size"]="60px"
+                }
+                else if(text.length>=20 && text.length<50){
+                    div.style["font-size"]="35px"
+                }else if(text.length>=50 && text.length<100){
+                    div.style["font-size"]="24px"
+                }else if(text.length>=100 && text.length<300){
+                    div.style["font-size"]="18px"
+                }else if(text.length>=300 && text.length<400){
+                    div.style["font-size"]="16px"
+                }else{
+                    div.style["font-size"]="14px"
+                }
+            }
+            const csrftoken = getCookie('csrftoken');
+            const session_question_text = document.getElementById("session_question_text")
+            const session_answer1 = document.getElementById("session_answer1")
+            const session_answer2 = document.getElementById("session_answer2")
+            const session_answer3 = document.getElementById("session_answer3")
+            const session_answer4 = document.getElementById("session_answer4")
+            const next_question = document.getElementById("next_question")
+
+            const session_answer_check1 = document.getElementById("session_answer_check1")
+            const session_answer_check2 = document.getElementById("session_answer_check2")
+            const session_answer_check3 = document.getElementById("session_answer_check3")
+            const session_answer_check4 = document.getElementById("session_answer_check4")
+            
+            function next_question_fun(){
+                url=`/started_quiz_get_question/{{session.id}}`
+                console.log(url)
+                fetch(url)
+                .then((resp)=>resp.json())
+                .then(function(data){
+                    if(window.is_data){send_answer()}
+
+                    if(data!="Brak"){
+                        window.answer_id1 = data['answers'][0].id 
+                        window.answer_id2 = data['answers'][1].id 
+                        window.answer_id3 = data['answers'][2].id 
+                        window.answer_id4 = data['answers'][3].id 
+                        window.question_id = data['id']
+                        
+                        session_question_text.innerHTML=""
+                        session_answer1.innerHTML=""
+                        session_answer2.innerHTML=""
+                        session_answer3.innerHTML=""
+                        session_answer4.innerHTML=""
+                        next_question.value = data['id']
+                        session_question_text.innerHTML=data['question_text']
+                        fit_to_div(data['question_text'],session_question_text)
+                        session_answer1.innerHTML=data['answers'][0].answer_text
+                        fit_to_div(data['answers'][0].answer_text, session_answer1)
+                        session_answer2.innerHTML=data['answers'][1].answer_text
+                        fit_to_div(data['answers'][1].answer_text, session_answer2)
+                        session_answer3.innerHTML=data['answers'][2].answer_text
+                        fit_to_div(data['answers'][2].answer_text, session_answer3)
+                        session_answer4.innerHTML=data['answers'][3].answer_text
+                        fit_to_div(data['answers'][3].answer_text, session_answer4)
+                        window.is_data = true}
+                    if(data=="Brak"){
+                        session_question_text.style["font-size"]= "30px"
+                        session_question_text.innerHTML="<div style='text-align:center; overflow-wrap: break-word; font-size:50px;'>Quiz is finished!</div>"
+                        const session_answer_box1 = document.getElementById("session_answer_box1")
+                        const session_answer_box2 = document.getElementById("session_answer_box2")
+                        const session_answer_box3 = document.getElementById("session_answer_box3")
+                        const session_answer_box4 = document.getElementById("session_answer_box4")
+                        session_answer_box1.style.display = "none"
+                        session_answer_box2.style.display = "none"
+                        session_answer_box3.style.display = "none"
+                        session_answer_box4.style.display = "none"
+                        next_question.style.display= "none"
+                        setTimeout(function(){
+                        url = '/finish_quiz/{{session.id}}'
+                        
+                        fetch(url)
+                        .then((resp)=>resp.json())
+                        .then(function(data){
+                           console.log(data)
+                           
+                            session_question_text.innerHTML+=` 
+                            <div>Statistics:<br /> 
+                            Correct answers: ${data[0]}<br />
+                            Total number of points to be obtained: ${data[1]}<br />
+                            Percent: ${Math.round(data[0]/data[1]*100)}%</br>
+                                <div id="percentage_status">
+                                    <div id="percentage_status2"></div>
+                                </div>
+                            </div>
+                            `
+                            document.getElementById("percentage_status2").style.width = `${Math.round(data[0]/data[1]*100)}%`
+                            
+                        })}, 1000);
+                    }
+                })
+            }
+            next_question_fun()
+
+            next_question.addEventListener("click",next_question_fun)
+            
+            
+            function send_answer(){
+                let session_answer_check11 = false
+                if (session_answer_box1.classList.contains("session_active")){
+                    session_answer_check11 = true
+                }else{session_answer_check11 = false}
+
+                let session_answer_check12 = false
+                if (session_answer_box2.classList.contains("session_active")){
+                    session_answer_check12 = true
+                }else{session_answer_check12 = false}
+
+                let session_answer_check13 = false
+                if (session_answer_box3.classList.contains("session_active")){
+                    session_answer_check13 = true
+                }else{session_answer_check13 = false}
+
+                let session_answer_check14 = false
+                if (session_answer_box4.classList.contains("session_active")){
+                    session_answer_check14 = true
+                }else{session_answer_check14 = false}
+                
+                url = "/started_quiz_post_answer/{{session.id}}"
+                fetch(url,{
+                method:"POST", 
+                headers:{
+                    "Content-type":"application/json", "X-CSRFToken":csrftoken,
+                },
+                    body: JSON.stringify({'session_id': {{session.id}},
+                    'question_id': window.question_id,
+                    'answers': [
+                    {'answer_id': answer_id1, 'correct':session_answer_check11},
+                    {'answer_id': answer_id2, 'correct':session_answer_check12},
+                    {'answer_id': answer_id3, 'correct':session_answer_check13},
+                    {'answer_id': answer_id4, 'correct':session_answer_check14},
+                    ],
+                    })
+                }).then((res)=>res.json())
+                    .then((results)=>{
+                        console.log(results)
+                        session_answer_box1.classList.remove("session_active")
+                        session_answer_box2.classList.remove("session_active")
+                        session_answer_box3.classList.remove("session_active")
+                        session_answer_box4.classList.remove("session_active")
+                    })
+            }
+
+            session_answer_box1.addEventListener("click", function(){
+                if (session_answer_box1.classList.contains("session_active")){
+                    session_answer_box1.classList.remove("session_active")
+                }else{ session_answer_box1.classList.add("session_active")}
+            })
+            session_answer_box2.addEventListener("click", function(){
+                if (session_answer_box2.classList.contains("session_active")){
+                    session_answer_box2.classList.remove("session_active")
+                }else{ session_answer_box2.classList.add("session_active")}
+            })
+            session_answer_box3.addEventListener("click", function(){
+                if (session_answer_box3.classList.contains("session_active")){
+                    session_answer_box3.classList.remove("session_active")
+                }else{ session_answer_box3.classList.add("session_active")}
+            })
+            session_answer_box4.addEventListener("click", function(){
+                if (session_answer_box4.classList.contains("session_active")){
+                    session_answer_box4.classList.remove("session_active")
+                }else{ session_answer_box4.classList.add("session_active")}
+            })
+
+            
+        </script>
+    {%endif%}
+{%endblock%}

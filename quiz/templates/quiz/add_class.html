@@ -1,0 +1,9 @@
+{%extends "quiz/base.html"%}
+{% block content%}
+    <h1>Add class</h1>
+   <form action="{%url 'add_class' %}" method="POST">
+       {% csrf_token%}
+       {{form}}
+       <button type="submit" class="my_button">Add class</button>
+    </form>
+{%endblock%}

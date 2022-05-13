@@ -1,0 +1,17 @@
+{%extends "quiz/base.html"%}
+{% block content%}
+    <div class="my_profile_all_quizzes"> 
+        <a href="{%url 'add_class' %}"> 
+            <button class="my_button">Add class</button>
+        </a>
+        <span style="font-size: 30px;">Your classes (as Owner):</span>
+        {%for class in my_classes%}
+            <a href="{%url 'class' class.id%}"><div class="my_profile_quiz">{{class}} </div> </a>
+        {%endfor%}
+
+        <span style="font-size: 30px;">Your classes (as Student):</span>
+        {%for class in classes%}
+            <a href="{%url 'class' class.id%}"><div class="my_profile_quiz">{{class}} </div> </a>
+        {%endfor%}
+    </div>
+{%endblock%}

@@ -1,0 +1,13 @@
+{%extends "quiz/base.html"%}
+{% block content%}
+<form action="{% url 'edit_quiz' quiz.id%}" method="POST" class="form-control">
+    {% csrf_token %}
+    {{form}}
+    <button  class="my_button" type="submit">Edit</button>
+</form>
+
+<a href="{% url 'delete_quiz' quiz.id %}"><button class="my_button">Delete Quiz</button></a>
+<br />
+<a href="{% url 'quiz' quiz.id %}"><button class="my_button">Back</button></a>
+
+{%endblock%}

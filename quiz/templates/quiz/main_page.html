@@ -1,0 +1,22 @@
+{%extends "quiz/base.html"%}
+{% block content%}
+    {%if user.is_authenticated%}
+       
+        <div class="row">
+            {%for quiz in quizzes%}
+                <div class="col-md-6 col-sm-12">
+                    <a href="{% url 'quiz' quiz.id %}"> 
+                        <div class="quiz_name_block">
+                            <div class="quiz_name_main">{{quiz.name|truncatechars:32}} </div>
+                            <div class="small_stats">{{quiz.point_count}} questions</div>
+                        </div>
+                        <div class="quiz_description_block">
+                            {{quiz.description|truncatechars:62}}
+                        </div>
+                    </a>
+                </div>
+            {%endfor%}
+        </div>
+    {%endif%}
+
+{%endblock%}

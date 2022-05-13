@@ -1,0 +1,26 @@
+{%extends "quiz/base.html"%}
+{% block content%}
+    <div class="my_profile_all_quizzes"> 
+        {%if user.profile == class.owner %}
+        <form action="{%url 'add_user_to_class' class.id %}" method="POST" class="form-control">
+            {%csrf_token%}
+            <input type="text" name="user_name" placeholder="Nazwa użytkownika" class="form-control my_form">
+            <button class="my_button">Add student </button>
+        </form>
+        {%endif%}
+        {%if class.students.all%}
+        <span style="font-size: 30px;">Students:</span>
+        {%endif%}
+        {%for student in class.students.all%}
+            <a href="{%url 'profile' student.id%}"><div class="my_profile_quiz">{{student}} 
+                {%if user.profile == class.owner %}
+                <form class="class_form" action="{%url 'remove_user_from_class' class.id student.id%}" method="POST"> 
+                    {%csrf_token%}
+                    <button type="submit" class="my_button" style="height: auto; font-size: 15px; margin-top:0;"> Delete from class</button>
+                </form>
+                {%endif%}
+            </div> </a>
+
+        {%endfor%}
+    </div>
+{%endblock%}

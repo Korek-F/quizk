@@ -1,0 +1,43 @@
+{%extends "quiz/base.html"%}
+{% block content%}
+    <div class="my_profile">
+        <div class="my_profile_name">{{profile.user.username}}</div>
+        <div class="my_profile_quiz_count">The number of your quizzes: {{quiz_count}}</div>
+        <div class="my_profile_quiz_count">Total views: {{total_views}}</div>
+    </div>
+     <a href="{% url 'add_quiz'%}">
+            <button id="add_question">Add Quiz</button>
+    </a>
+<div class="my_profile_all_quizzes">
+    <span style="font-size: 40px;">Yours quizzes: </span><br />
+    {% if most_popular_quiz %}
+    <span style="font-size: 30px;">Most popular Quiz: </span>
+    <a href="{% url 'quiz' most_popular_quiz.id%}"> 
+        <div class="my_profile_quiz" > 
+            {{most_popular_quiz.name|truncatechars:40}} <br/>
+            <span style="font-size: 20px;">(Number of questions{{most_popular_quiz.questions.all.count}})</span>
+        </div>
+    </a>
+    {%endif%}
+    <span style="font-size: 30px;">Public: </span><br />
+    {%for quiz in public_quiz %}
+    <a href="{% url 'quiz' quiz.id%}"> 
+        <div class="my_profile_quiz" > 
+            {{quiz.name|truncatechars:40}} <br/>
+            <span style="font-size: 20px;">(Number of questions {{quiz.questions.all.count}})</span>
+        </div>
+    </a>
+    {%endfor%}
+    {%if user.profile == profile%}
+        <span style="font-size: 30px;">Private: </span><br />
+        {%for quiz in private_quiz %}
+        <a href="{% url 'quiz' quiz.id%}"> 
+            <div class="my_profile_quiz" > 
+                {{quiz.name|truncatechars:40}} <br/>
+                <span style="font-size: 20px;">(Number of questions {{quiz.questions.all.count}})</span>
+            </div>
+        </a>
+        {%endfor%}
+    {%endif%}
+</div>
+{%endblock%}

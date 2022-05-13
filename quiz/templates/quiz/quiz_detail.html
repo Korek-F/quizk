@@ -1,0 +1,354 @@
+{%extends "quiz/base.html"%}
+{% load static%}
+{% block content%}
+    <div class="quiz_name_block">
+      {{quiz.name}}     
+      <div class="mini_stats"> 
+      Views: {{quiz.views}} <br />
+      Finished sessions: {{quiz.finished_sessions}}
+      </div>
+    </div>
+    <div class="quiz_description_block">
+      {{quiz.description}}     
+    </div>
+    
+    {%if user.is_authenticated and user.profile == quiz.owner%}
+      <div class="row"> 
+        <div class="col-sm-12 col-md-4"> 
+          <button id="add_question"  class="my_button">Add Question</button>
+        </div>
+        <div class="col-sm-12 col-md-4"> 
+          <a href="{%url 'edit_quiz' quiz.id%}">
+            <button  class="my_button">Edit</button>
+          </a>
+        </div>
+        <div class="col-sm-12 col-md-4"> 
+          <form action="{% url 'start_session' quiz.id%}" method="POST">
+            {% csrf_token %}
+            <button class="my_button">Start Quiz</button>
+          </form>
+        </div>
+      </div>
+        <div id="all_questions_box" class="row">
+
+
+        </div>
+        
+
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <input type="text" id="question_text" maxlength="500" placeholder="Question" name="question" />
+                <hr />
+                <input type="text" class="answer_text" 
+                placeholder="Answer" maxlength="500"  id="answer_text_1" />
+                <input type="checkbox" class="answer_check" id="answer_check_1" />
+  
+                <input type="text" class="answer_text" 
+                placeholder="Answer" maxlength="500"  id="answer_text_2" />
+                <input type="checkbox" class="answer_check" id="answer_check_2" />
+
+                <input type="text" class="answer_text" 
+                placeholder="Answer" maxlength="500" id="answer_text_3" />
+                <input type="checkbox" class="answer_check" id="answer_check_3" />
+
+                <input type="text" class="answer_text" 
+                placeholder="Answer" maxlength="500" id="answer_text_4" />
+                <input type="checkbox" class="answer_check" id="answer_check_4" />
+
+                <button id="add_question_js">Send</button>
+            </div>
+        </div>
+
+        <div id="myModal2" class="modal">
+          <div class="modal-content">
+              <span class="close">&times;</span>
+              <input type="text" maxlength="500" id="question_text1" placeholder="Question" name="question" />
+              <hr />
+              <input type="text" class="answer_text" 
+              placeholder="Answer" maxlength="500" id="answer_text_11" />
+              <input type="checkbox"  class="answer_check" id="answer_check_11" />
+
+              <input type="text" class="answer_text" 
+              placeholder="Answer" maxlength="500" id="answer_text_21" />
+              <input type="checkbox" class="answer_check" id="answer_check_21" />
+
+              <input type="text" class="answer_text" 
+              placeholder="Answer" maxlength="500" id="answer_text_31" />
+              <input type="checkbox" class="answer_check" id="answer_check_31" />
+
+              <input type="text" class="answer_text" 
+              placeholder="Answer" maxlength="500" id="answer_text_41" />
+              <input type="checkbox" class="answer_check" id="answer_check_41" />
+
+              <button id="change_question">Edit</button>
+              <button id="delete_question">Delete</button>
+          </div>
+      </div>
+    {%else%}
+    <form action="{% url 'start_session' quiz.id%}" method="POST">
+      {% csrf_token %}
+      <button class="my_button">Start Quiz</button>
+    </form>
+    {%endif%}
+
+    <script type="text/javascript">
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+
+        const modal = document.getElementById("myModal");
+        const btn = document.getElementById("add_question");
+        const span = document.getElementsByClassName("close")[0];
+        const span2 = document.getElementsByClassName("close")[1];
+        btn.onclick = function() {
+          modal.style.display = "block";
+        }
+        
+        span.onclick = function() {modal.style.display = "none";}
+
+        window.onclick = function(event) {if (event.target == modal) {modal.style.display = "none";}}
+
+        const add_question_js =document.getElementById("add_question_js")
+
+        add_question_js.addEventListener("click", function(){
+            let question_input= document.querySelector('#question_text')
+            let question_text = question_input.value
+            let answers= []
+            let answer_check_1 = document.getElementById("answer_check_1")
+            if(answer_check_1.checked){
+              answer_check_1=true
+            }else{
+              answer_check_1=false
+            }
+
+            let answer_check_2 = document.getElementById("answer_check_2")
+            if(answer_check_2.checked){
+              answer_check_2=true
+            }else{
+              answer_check_2=false
+            }
+
+            let answer_check_3 = document.getElementById("answer_check_3")
+            if(answer_check_3.checked){
+              answer_check_3=true
+            }else{
+              answer_check_3=false
+            }
+
+            let answer_check_4 = document.getElementById("answer_check_4")
+            if(answer_check_4.checked){
+              answer_check_4=true
+            }else{
+              answer_check_4=false
+            }
+            
+            const answer_text_1  = document.getElementById("answer_text_1").value
+            const answer_text_2  = document.getElementById("answer_text_2").value
+            const answer_text_3  = document.getElementById("answer_text_3").value
+            const answer_text_4  = document.getElementById("answer_text_4").value
+
+          url = `/add_question`
+          fetch(url,{
+              method:"POST", headers:{
+                  "Content-type":"application/json", "X-CSRFToken":csrftoken,
+              },
+              body: JSON.stringify({'question_text': question_text,
+                'quiz_id': {{quiz.id}},
+                'answers': [
+              {'answer_text': answer_text_1, 'correct':answer_check_1},
+              {'answer_text': answer_text_2, 'correct':answer_check_2},
+              {'answer_text': answer_text_3, 'correct':answer_check_3},
+              {'answer_text': answer_text_4, 'correct':answer_check_4},
+              ],
+              })
+          }).then(function(response){
+              console.log(response)
+              document.getElementById("answer_text_1").value = ""
+              document.getElementById("answer_text_2").value = ""
+              document.getElementById("answer_text_3").value = ""
+              document.getElementById("answer_text_4").value = ""
+              document.querySelector('#question_text').value = ""
+              document.getElementById("answer_check_1").checked = false
+              document.getElementById("answer_check_2").checked = false
+              document.getElementById("answer_check_3").checked = false
+              document.getElementById("answer_check_4").checked = false
+              modal.style.display = "none";
+              refreshQuestions()
+          })
+        })
+        const all_questions_box = document.getElementById("all_questions_box")
+        
+        function refreshQuestions(){
+          url = `/get_questions/{{quiz.id}}`
+          fetch(url)
+          .then((resp)=>resp.json())
+          .then(function(data){
+           
+              all_questions_box.innerHTML=""
+              for (i in data.questions){
+                element = document.createElement("div");
+                element.classList.add('question_box')
+                element.classList.add('col-sm-12')
+                element.classList.add('col-md-4')
+                element.innerHTML = data.questions[i].question_text
+                all_questions_box.append(element)
+                element.innerHTML +=` <button class="question_box_button" onclick='editQuestion(${data.questions[i].id})'>Edit</button>`
+              }
+          })
+        }
+          refreshQuestions()
+          span2.onclick = function() {modal2.style.display = "none"; }
+          const  question_text1 = document.getElementById("question_text1")
+          const  answer_text_11 = document.getElementById("answer_text_11")
+          const  answer_text_21 = document.getElementById("answer_text_21")
+          const  answer_text_31 = document.getElementById("answer_text_31")
+          const  answer_text_41 = document.getElementById("answer_text_41")
+          const change_question = document.getElementById("change_question")
+
+          let answer_check_11 = document.getElementById("answer_check_11")
+          let answer_check_21 = document.getElementById("answer_check_21")
+          let answer_check_31 = document.getElementById("answer_check_31")
+          let answer_check_41 = document.getElementById("answer_check_41")
+
+          const modal2 = document.getElementById("myModal2");
+
+          function editQuestion(id){
+            change_question.value = id
+            url = `/get_question/${id}`
+            fetch(url)
+            .then((resp)=>resp.json())
+            .then(function(data){
+            console.log(data.answers)
+            modal2.style.display = "block";
+            question_text1.value = data.question_text
+            answer_text_11.value = data.answers[0].answer_text
+            answer_text_21.value = data.answers[1].answer_text
+            answer_text_31.value = data.answers[2].answer_text
+            answer_text_41.value = data.answers[3].answer_text  
+            if(data.answers[0].correct==true){
+              answer_check_11.checked = true
+            }else{answer_check_11.checked = false}
+
+            if(data.answers[1].correct==true){
+              answer_check_21.checked = true
+            }else{answer_check_21.checked = false}
+
+             if(data.answers[2].correct==true){
+              answer_check_31.checked = true
+            }else{answer_check_31.checked = false}
+
+             if(data.answers[3].correct==true){
+              answer_check_41.checked = true
+            }else{answer_check_41.checked = false}
+          })
+          }
+         
+          const delete_question = document.getElementById("delete_question")
+          delete_question.addEventListener("click", function(){
+            url =  `/delete_question/${change_question.value}`
+            fetch(url,{
+              method:"DELETE", headers:{
+                  "Content-type":"application/json",
+                  "X-CSRFToken":csrftoken,
+              },
+            })
+            .then((resp)=>resp.json())
+            .then(function(data){
+              
+              modal2.style.display = "none";
+              refreshQuestions()
+            })
+          })
+
+          change_question.addEventListener("click", function(){
+
+            let question_input1= document.querySelector('#question_text1')
+            let question_text1 = question_input1.value
+            let answer_check_11 = document.getElementById("answer_check_11")
+            if(answer_check_11.checked){
+              answer_check_11=true
+            }else{
+              answer_check_11=false
+            }
+
+            let answer_check_21 = document.getElementById("answer_check_21")
+            if(answer_check_21.checked){
+              answer_check_21=true
+            }else{
+              answer_check_21=false
+            }
+
+            let answer_check_31 = document.getElementById("answer_check_31")
+            if(answer_check_31.checked){
+              answer_check_31=true
+            }else{
+              answer_check_31=false
+            }
+
+            let answer_check_411 = document.getElementById("answer_check_41")
+            if(answer_check_41.checked){
+              answer_check_41=true
+            }else{
+              answer_check_41=false
+            }
+            
+            const answer_text_11  = document.getElementById("answer_text_11").value
+            const answer_text_21  = document.getElementById("answer_text_21").value
+            const answer_text_31  = document.getElementById("answer_text_31").value
+            const answer_text_41  = document.getElementById("answer_text_41").value
+
+
+          url =  `/delete_question/${change_question.value}`
+            fetch(url,{
+              method:"DELETE",
+              headers:{
+                  "Content-type":"application/json",
+                  "X-CSRFToken":csrftoken,
+              },
+            })
+            .then((resp)=>resp.json())
+            .then(function(data){
+              console.log(1)
+            })
+          
+        
+          url = `/add_question`
+          fetch(url,{
+              method:"POST",
+              headers:{
+                  "Content-type":"application/json",
+                  "X-CSRFToken":csrftoken,
+              },
+              body: JSON.stringify({'question_text': question_text1,
+                'quiz_id': {{quiz.id}},
+                'answers': [
+              {'answer_text': answer_text_11, 'correct':answer_check_11},
+              {'answer_text': answer_text_21, 'correct':answer_check_21},
+              {'answer_text': answer_text_31, 'correct':answer_check_31},
+              {'answer_text': answer_text_41, 'correct':answer_check_41},
+              ],
+              })
+          }).then(function(response){
+              modal2.style.display = "none";
+              refreshQuestions()
+          })
+ 
+            })
+
+        </script>
+{%endblock%}

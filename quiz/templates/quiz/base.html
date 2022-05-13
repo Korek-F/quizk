@@ -1,0 +1,34 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'quiz/css.css' %}">
+    <title>Quizk</title>
+  </head>
+  <body>
+  
+  <div class="main-box">
+  <nav>
+    <div class="row">
+    {% if user.is_authenticated%}
+      <div class="col-sm-12 col-md-3 my-nav-item"> <a href="{% url 'main_page' %}">Main Page</a></div>
+      <div class="col-sm-12 col-md-3 my-nav-item"><a href="{% url 'profile' user.profile.id %}">My Profile</a></div>
+      <div class="col-sm-12 col-md-3 my-nav-item"><a href="{% url 'my_class' %}">Classes</a></div>
+      <div class="col-sm-12 col-md-3 my-nav-item"><a href="{% url 'logout' %}"> Log Out</a></div>
+    {%else%}
+      <div class="col-sm-12 col-md-6 my-nav-item" ><a href="{%url 'register' %}">Sign Up</a></div>
+      <div class="col-sm-12 col-md-6 my-nav-item"><a href="{%url 'login_view' %}"> Sing In</a></div>
+    {%endif%}
+    </div>
+  </nav>
+  
+  <div class="fake_box"></div>
+    {%block content%}
+    {%endblock%}
+  </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+  </body>
+</html>
